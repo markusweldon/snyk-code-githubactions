@@ -84,8 +84,15 @@ This demo includes intentional vulnerabilities for testing:
 
 1. 🏃 **Go to Actions**: Navigate to your repository's Actions tab
 2. 🎯 **Select Run**: Click on the latest workflow run
-3. 📥 **Download**: Grab the HTML report from the artifacts section
-4. 🔍 **Explore**: Open the report to see detailed vulnerability analysis
+3. 📥 **Download**: Grab the HTML report from the artifacts section (downloads as a zip file)
+4. 📂 **Extract**: Unzip the downloaded file to access the HTML report
+5. 🔍 **Explore**: Open the HTML file in your browser to see detailed vulnerability analysis
+
+---
+
+## 🎬 **[👀 VIEW LIVE DEMO →](https://github.com/markusweldon/snyk-code-githubactions/actions)**
+
+See Snyk Code in action! Check out recent workflow runs and download sample HTML reports.
 
 ---
 
