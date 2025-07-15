@@ -1,0 +1,42 @@
+name: Snyk Code Security Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  snyk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🛡️ Snyk Code test (with timing)
+        run: |
+          echo "⏱️ Starting Snyk Code scan..."
+          start_time=$(date +%s)
+          snyk code test
+          end_time=$(date +%s)
+          duration=$((end_time - start_time))
+          echo "⏱️ Snyk Code scan duration: $duration seconds"
+        env:
+          SNYK_API: https://api.us.snyk.io
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: 📄 Convert Snyk output to HTML
+        run: |
+          TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
+          REPORT_NAME="${{ github.event.repository.name }}-snyk-code-report-${TIMESTAMP}.html"
+          snyk code test --json > snyk-code.json || true
+          npx snyk-to-html -i snyk-code.json -o "${REPORT_NAME}"
+          echo "REPORT_NAME=${REPORT_NAME}" >> $GITHUB_ENV
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: 📤 Upload HTML report artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.event.repository.name }}-snyk-code-report
+          path: ${{ env.REPORT_NAME }}
