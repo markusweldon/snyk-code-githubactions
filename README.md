@@ -19,7 +19,15 @@ This repository demonstrates how to integrate Snyk Code security scanning into y
    - Name: `SNYK_TOKEN`
    - Value: Your Snyk API token
 
-3. **Push code or create a PR** to trigger the workflow
+3. **IMPORTANT: Check Regional API Endpoint**
+   - This workflow is configured for the **default/global** Snyk API endpoint: `https://api.snyk.io`
+   - If your Snyk account is in a different region, update the `SNYK_API` environment variable in `.github/workflows/snyk-code.yml`:
+     - **US**: `https://api.us.snyk.io`
+     - **EU**: `https://api.eu.snyk.io`
+     - **AU**: `https://api.au.snyk.io`
+   - Using the wrong endpoint will result in authentication failures!
+
+4. **Push code or create a PR** to trigger the workflow
 
 ## Workflow Details
 

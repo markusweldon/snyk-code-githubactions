@@ -9,6 +9,13 @@ on:
 jobs:
   snyk:
     runs-on: ubuntu-latest
+    env:
+      # IMPORTANT: Set the correct regional API endpoint for your Snyk account
+      # Default/Global: https://api.snyk.io
+      # US: https://api.us.snyk.io
+      # EU: https://api.eu.snyk.io
+      # AU: https://api.au.snyk.io
+      SNYK_API: https://api.snyk.io
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v3
@@ -22,7 +29,6 @@ jobs:
           duration=$((end_time - start_time))
           echo "⏱️ Snyk Code scan duration: $duration seconds"
         env:
-          SNYK_API: https://api.us.snyk.io
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       - name: 📄 Convert Snyk output to HTML
