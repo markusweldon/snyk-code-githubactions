@@ -19,7 +19,11 @@ jobs:
       ###############################################################
       SNYK_API: https://api.snyk.io
       
+      ###############################################################
       # Set to true to fail the pipeline on high/critical severity issues (default: false)
+      # By default, the scan continues even if issues are found (exit code 0)
+      # To fail on high/critical issues, set SNYK_CODE_FAIL_ON_ISSUES: true above
+      ###############################################################
       SNYK_CODE_FAIL_ON_ISSUES: false
     steps:
       - name: 📥 Checkout code
@@ -38,11 +42,7 @@ jobs:
           echo "⏱️ Starting Snyk Code scan..."
           start_time=$(date +%s)
           
-          ###############################################################
           # Run Snyk Code test
-          # By default, the scan continues even if issues are found (exit code 0)
-          # To fail on high/critical issues, set SNYK_CODE_FAIL_ON_ISSUES: true above
-          ###############################################################
           if [[ "${{ env.SNYK_CODE_FAIL_ON_ISSUES }}" == "true" ]]; then
             echo "❗ Pipeline will fail if high/critical issues are found"
             snyk code test --severity-threshold=high
