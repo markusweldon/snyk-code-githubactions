@@ -10,12 +10,15 @@ jobs:
   snyk:
     runs-on: ubuntu-latest
     env:
+      ###############################################################
       # IMPORTANT: Set the correct regional API endpoint for your Snyk account
       # Default/Global: https://api.snyk.io
-      # US: https://api.us.snyk.io
+      # US: https://api.us.snyk.io  
       # EU: https://api.eu.snyk.io
       # AU: https://api.au.snyk.io
+      ###############################################################
       SNYK_API: https://api.snyk.io
+      
       # Set to true to fail the pipeline on high/critical severity issues (default: false)
       SNYK_CODE_FAIL_ON_ISSUES: false
     steps:
@@ -35,9 +38,11 @@ jobs:
           echo "⏱️ Starting Snyk Code scan..."
           start_time=$(date +%s)
           
+          ###############################################################
           # Run Snyk Code test
           # By default, the scan continues even if issues are found (exit code 0)
           # To fail on high/critical issues, set SNYK_CODE_FAIL_ON_ISSUES: true above
+          ###############################################################
           if [[ "${{ env.SNYK_CODE_FAIL_ON_ISSUES }}" == "true" ]]; then
             echo "❗ Pipeline will fail if high/critical issues are found"
             snyk code test --severity-threshold=high
