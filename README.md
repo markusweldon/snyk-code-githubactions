@@ -22,8 +22,8 @@ This repository demonstrates how to integrate Snyk Code security scanning into y
 3. **Optional: Enable Pipeline Failure on High/Critical Issues**:
    - By default, the pipeline continues even if security issues are found
    - To fail the pipeline when high or critical severity issues are detected:
-     - Add another secret: `SNYK_CODE_FAIL_ON_ISSUES` with value `true`
-     - This uses Snyk's `--severity-threshold=high` flag
+     - Set `SNYK_CODE_FAIL_ON_ISSUES: true` in the workflow file (currently set to `false`)
+     - This uses Snyk's `--severity-threshold=high` flag to fail only on high/critical issues
 
 4. **IMPORTANT: Check Regional API Endpoint**
    - This workflow is configured for the **default/global** Snyk API endpoint: `https://api.snyk.io`

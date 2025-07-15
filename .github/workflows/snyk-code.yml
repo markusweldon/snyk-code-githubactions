@@ -16,6 +16,8 @@ jobs:
       # EU: https://api.eu.snyk.io
       # AU: https://api.au.snyk.io
       SNYK_API: https://api.snyk.io
+      # Set to true to fail the pipeline on high/critical severity issues (default: false)
+      SNYK_CODE_FAIL_ON_ISSUES: false
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
@@ -27,9 +29,8 @@ jobs:
           
           # Run Snyk Code test
           # By default, the scan continues even if issues are found (exit code 0)
-          # To fail on high/critical issues, set SNYK_CODE_FAIL_ON_ISSUES=true in your repository secrets
-          # or pass --severity-threshold=high to fail on high/critical issues only
-          if [[ "${{ secrets.SNYK_CODE_FAIL_ON_ISSUES }}" == "true" ]]; then
+          # To fail on high/critical issues, set SNYK_CODE_FAIL_ON_ISSUES: true above
+          if [[ "${{ env.SNYK_CODE_FAIL_ON_ISSUES }}" == "true" ]]; then
             echo "❗ Pipeline will fail if high/critical issues are found"
             snyk code test --severity-threshold=high
           else
