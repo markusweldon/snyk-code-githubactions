@@ -19,6 +19,9 @@ jobs:
       # Set to true to fail the pipeline on high/critical severity issues (default: false)
       SNYK_CODE_FAIL_ON_ISSUES: false
     steps:
+      - name: 🚀 Setup Environment
+        run: echo "Setting up environment for Snyk Code scan..."
+      
       - name: 📥 Checkout code
         uses: actions/checkout@v4
 
