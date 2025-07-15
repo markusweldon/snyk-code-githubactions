@@ -48,11 +48,11 @@ jobs:
           
           end_time=$(date +%s)
           duration=$((end_time - start_time))
-          echo "⏱️ Snyk Code scan duration: $duration seconds"
+          echo "🔥 SNYK CODE SCAN COMPLETED IN: $duration SECONDS 🔥"
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      - name: 📄 Convert Snyk output to HTML
+      - name: 📊 Generate HTML report
         run: |
           TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
           REPORT_NAME="${{ github.event.repository.name }}-snyk-code-report-${TIMESTAMP}.html"
@@ -62,8 +62,13 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      - name: 📤 Upload HTML report artifact
+      - name: 📤 Upload HTML report
         uses: actions/upload-artifact@v4
         with:
           name: ${{ github.event.repository.name }}-snyk-code-report
           path: ${{ env.REPORT_NAME }}
+
+      - name: 📋 Report ready
+        run: |
+          echo "🎉 HTML REPORT GENERATED: ${{ env.REPORT_NAME }}"
+          echo "📥 Download the report from: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"

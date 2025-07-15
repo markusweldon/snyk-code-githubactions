@@ -6,7 +6,7 @@ This repository demonstrates how to integrate Snyk Code security scanning into y
 
 - ⏱️ **Performance Tracking**: Measures and displays scan duration
 - 📊 **HTML Reports**: Generates beautiful HTML reports with timestamped filenames
-- 📤 **Artifacts**: Automatically uploads reports as GitHub Actions artifacts
+- 📤 **Reports**: Automatically uploads reports as downloadable files
 - 🛡️ **Security Testing**: Includes sample vulnerabilities for demonstration
 
 ## Setup Instructions
@@ -41,7 +41,7 @@ The workflow:
 - Runs on every push to `main` and on pull requests
 - Times only the Snyk Code scan (not setup steps)
 - Generates HTML reports with repository name and timestamp
-- Uploads reports as artifacts (e.g., `snyk-code-githubactions-snyk-code-report-20240115-143022.html`)
+- Uploads reports as downloadable files (e.g., `snyk-code-githubactions-snyk-code-report-20240115-143022.html`)
 
 ## Sample Vulnerabilities
 
@@ -57,5 +57,5 @@ These are for demonstration purposes only.
 After the workflow runs:
 1. Go to the Actions tab in your repository
 2. Click on the workflow run
-3. Download the artifact from the bottom of the page
+3. Download the report from the bottom of the page
 4. Open the HTML file to view the detailed security report
