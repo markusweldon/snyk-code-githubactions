@@ -18,13 +18,25 @@ jobs:
       SNYK_API: https://api.snyk.io
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: 🛡️ Snyk Code test (with timing)
         run: |
           echo "⏱️ Starting Snyk Code scan..."
           start_time=$(date +%s)
-          snyk code test
+          
+          # Run Snyk Code test
+          # By default, the scan continues even if issues are found (exit code 0)
+          # To fail on high/critical issues, set SNYK_CODE_FAIL_ON_ISSUES=true in your repository secrets
+          # or pass --severity-threshold=high to fail on high/critical issues only
+          if [[ "${{ secrets.SNYK_CODE_FAIL_ON_ISSUES }}" == "true" ]]; then
+            echo "❗ Pipeline will fail if high/critical issues are found"
+            snyk code test --severity-threshold=high
+          else
+            echo "ℹ️ Pipeline will continue regardless of issues found (default behavior)"
+            snyk code test || true
+          fi
+          
           end_time=$(date +%s)
           duration=$((end_time - start_time))
           echo "⏱️ Snyk Code scan duration: $duration seconds"
@@ -42,7 +54,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       - name: 📤 Upload HTML report artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ github.event.repository.name }}-snyk-code-report
           path: ${{ env.REPORT_NAME }}
