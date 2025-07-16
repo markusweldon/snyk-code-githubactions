@@ -7,7 +7,8 @@ on:
     branches: [ main ]
 
 jobs:
-  snyk:
+  security-analysis:
+    name: 🛡️ Snyk Code Security Analysis
     runs-on: ubuntu-latest
     env:
       ###############################################################
@@ -47,7 +48,7 @@ jobs:
             echo "❗ Pipeline will fail if high/critical issues are found"
             snyk code test --severity-threshold=high && SCAN_RESULT=0 || SCAN_RESULT=$?
           else
-            echo "ℹ️ Pipeline will continue regardless of issues found (default behavior)"
+            echo "ℹ️ Pipeline will continue regardless of issues found (reporting only)"
             snyk code test || true
             SCAN_RESULT=0
           fi
@@ -111,5 +112,5 @@ jobs:
           if [[ "${{ env.SNYK_CODE_FAIL_ON_ISSUES }}" == "true" ]]; then
             echo "🛡️ Security gate: ENABLED (blocking high/critical issues)"
           else
-            echo "📊 Security gate: DISABLED (monitor mode only)"
+            echo "📊 Security gate: DISABLED (reporting only, not blocking)"
           fi
