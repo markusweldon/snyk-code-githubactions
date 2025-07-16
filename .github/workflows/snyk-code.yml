@@ -45,19 +45,36 @@ jobs:
           # Run Snyk Code test
           if [[ "${{ env.SNYK_CODE_FAIL_ON_ISSUES }}" == "true" ]]; then
             echo "❗ Pipeline will fail if high/critical issues are found"
-            snyk code test --severity-threshold=high
+            snyk code test --severity-threshold=high && SCAN_RESULT=0 || SCAN_RESULT=$?
           else
             echo "ℹ️ Pipeline will continue regardless of issues found (default behavior)"
             snyk code test || true
+            SCAN_RESULT=0
           fi
           
           end_time=$(date +%s)
           duration=$((end_time - start_time))
           echo "🔥 SNYK CODE SCAN COMPLETED IN: $duration SECONDS 🔥"
+          
+          # If scan failed due to vulnerabilities, provide clear message
+          if [[ $SCAN_RESULT -ne 0 ]]; then
+            echo ""
+            echo "❌ ==========================================="
+            echo "❌ SECURITY GATE BLOCKED THIS DEPLOYMENT"
+            echo "❌ High or Critical vulnerabilities detected!"
+            echo "❌ Fix the issues above before merging."
+            echo "❌ ==========================================="
+            echo ""
+            echo "💡 Tip: Download the HTML report below for detailed remediation guidance"
+          fi
+          
+          # Exit with the scan result AFTER we output the message
+          exit $SCAN_RESULT
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       - name: 📊 Generate HTML report
+        if: always()
         run: |
           TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
           REPORT_NAME="${{ github.event.repository.name }}-snyk-code-report-${TIMESTAMP}.html"
@@ -68,12 +85,14 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       - name: 📤 Upload HTML report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ${{ github.event.repository.name }}-snyk-code-report
           path: ${{ env.REPORT_NAME }}
 
       - name: 📋 Report ready
+        if: always()
         run: |
           echo "🎉 HTML REPORT GENERATED: ${{ env.REPORT_NAME }}"
           echo "📥 Download the report from: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
