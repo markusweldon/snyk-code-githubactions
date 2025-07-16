@@ -86,14 +86,30 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      - name: 📤 Upload Report
+      - name: 📤 Upload HTML Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ${{ github.event.repository.name }}-snyk-code-report
           path: ${{ env.REPORT_NAME }}
 
-      - name: ✅ Summary
+      - name: 📥 Download Report Instructions
         if: always()
         run: |
-          echo "📥 Download report: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "==========================================="
+          echo "📥 HTML REPORT AVAILABLE FOR DOWNLOAD"
+          echo "==========================================="
+          echo ""
+          echo "1. Scroll down to the bottom of this page"
+          echo "2. Find 'Artifacts' section"  
+          echo "3. Click on: ${{ github.event.repository.name }}-snyk-code-report"
+          echo "4. Extract the ZIP file to view the HTML report"
+          echo ""
+          echo "Direct link to this run:"
+          echo "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo ""
+          if [[ "${{ env.SNYK_CODE_FAIL_ON_ISSUES }}" == "true" ]]; then
+            echo "🛡️ Security gate: ENABLED (blocking high/critical issues)"
+          else
+            echo "📊 Security gate: DISABLED (monitor mode only)"
+          fi
