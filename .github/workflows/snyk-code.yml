@@ -73,26 +73,34 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      - name: 📊 Generate HTML report
+      - name: 📊 Generate and Upload HTML Report
         if: always()
         run: |
+          echo "📊 Generating HTML report..."
           TIMESTAMP=$(date +'%Y%m%d-%H%M%S')
           REPORT_NAME="${{ github.event.repository.name }}-snyk-code-report-${TIMESTAMP}.html"
           snyk code test --json > snyk-code.json || true
           npx snyk-to-html -i snyk-code.json -o "${REPORT_NAME}"
+          echo "✅ HTML report generated: ${REPORT_NAME}"
           echo "REPORT_NAME=${REPORT_NAME}" >> $GITHUB_ENV
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      - name: 📤 Upload HTML report
+      - name: 📤 Upload report as artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ${{ github.event.repository.name }}-snyk-code-report
           path: ${{ env.REPORT_NAME }}
 
-      - name: 📋 Report ready
+      - name: ✅ Workflow Complete
         if: always()
         run: |
-          echo "🎉 HTML REPORT GENERATED: ${{ env.REPORT_NAME }}"
-          echo "📥 Download the report from: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "🎉 Snyk Code scan workflow complete!"
+          echo "📥 Download the HTML report from: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo ""
+          if [[ "${{ env.SNYK_CODE_FAIL_ON_ISSUES }}" == "true" ]]; then
+            echo "🛡️ Security gate is ENABLED - Pipeline fails on high/critical issues"
+          else
+            echo "📊 Running in monitor mode - Pipeline continues regardless of issues"
+          fi
