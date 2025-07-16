@@ -8,7 +8,6 @@ Transform your development workflow with **Snyk Code** - the industry's most adv
 
 - ⚡ **Lightning Performance**: Sub-10 second scans with real-time timing metrics
 - 📊 **Beautiful Reports**: Stunning HTML reports with vulnerability details and remediation guidance
-- 🔥 **Zero False Positives**: AI-powered analysis with contextual understanding
 - 🛡️ **Enterprise Ready**: Configurable failure thresholds and regional API support
 - 📱 **Developer Friendly**: Seamless integration with your existing workflow
 
