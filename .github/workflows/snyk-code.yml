@@ -73,7 +73,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      - name: 📊 Generate and Upload HTML Report
+      - name: 📊 Generate HTML Report
         if: always()
         run: |
           echo "📊 Generating HTML report..."
@@ -86,21 +86,14 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      - name: 📤 Upload report as artifact
+      - name: 📤 Upload Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ${{ github.event.repository.name }}-snyk-code-report
           path: ${{ env.REPORT_NAME }}
 
-      - name: ✅ Workflow Complete
+      - name: ✅ Summary
         if: always()
         run: |
-          echo "🎉 Snyk Code scan workflow complete!"
-          echo "📥 Download the HTML report from: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          echo ""
-          if [[ "${{ env.SNYK_CODE_FAIL_ON_ISSUES }}" == "true" ]]; then
-            echo "🛡️ Security gate is ENABLED - Pipeline fails on high/critical issues"
-          else
-            echo "📊 Running in monitor mode - Pipeline continues regardless of issues"
-          fi
+          echo "📥 Download report: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
