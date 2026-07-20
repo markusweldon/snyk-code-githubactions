@@ -5,14 +5,43 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  # Run automatically on the 1st and 15th of every month at 09:00 UTC (~bi-weekly).
-  # For monthly instead, use: '0 9 1 * *'
+  # Run automatically every Monday at 09:00 UTC so there is always a
+  # blocked run within the last 7 days (well inside GitHub's 90-day log retention).
   schedule:
-    - cron: '0 9 1,15 * *'
+    - cron: '0 9 * * 1'
   # Allow manual runs from the Actions tab (no commit needed).
   workflow_dispatch:
 
 jobs:
+  # Keeps the scheduled workflow from being auto-disabled after 60 days of no
+  # repo activity. On scheduled runs, if the last commit is >=45 days old it
+  # pushes an empty commit to reset GitHub's inactivity clock. Runs only on
+  # schedule, and the bot push does NOT re-trigger the scan (no loop).
+  keepalive:
+    name: 🔄 Keep schedule alive
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      - name: 🔄 Push keepalive commit if repo is near idle limit
+        run: |
+          LAST_COMMIT_TS=$(git log -1 --format=%ct)
+          NOW=$(date +%s)
+          AGE_DAYS=$(( (NOW - LAST_COMMIT_TS) / 86400 ))
+          echo "Last commit was ${AGE_DAYS} day(s) ago"
+          if [ "$AGE_DAYS" -ge 45 ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit --allow-empty -m "chore: keepalive to keep scheduled scan enabled"
+            git push
+            echo "✅ Pushed keepalive commit."
+          else
+            echo "ℹ️ Repo active within 45 days; no keepalive needed."
+          fi
+
   security-analysis:
     name: 🛡️ Snyk Code Security Analysis
     runs-on: ubuntu-latest
