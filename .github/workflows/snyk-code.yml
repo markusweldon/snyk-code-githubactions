@@ -5,6 +5,12 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  # Run automatically on the 1st and 15th of every month at 09:00 UTC (~bi-weekly).
+  # For monthly instead, use: '0 9 1 * *'
+  schedule:
+    - cron: '0 9 1,15 * *'
+  # Allow manual runs from the Actions tab (no commit needed).
+  workflow_dispatch:
 
 jobs:
   security-analysis:
